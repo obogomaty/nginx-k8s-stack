@@ -1,0 +1,74 @@
+# This Deployment manifest defines the configuration for deploying an Nginx application.
+# 
+# apiVersion: Specifies the API version used for the Deployment resource.
+# kind: Indicates that this resource is a Deployment.
+# metadata:
+#   name: The name of the Deployment, in this case "nginx-app".
+# spec:
+#   replicas: Defines the number of pod replicas to be created (default is 1).
+#   selector:
+#     matchLabels: Specifies the label selector to identify pods managed by this Deployment.
+#   template:
+#     metadata:
+#       labels: Labels applied to the pods created by this Deployment.
+#     spec:
+#       containers:
+#         - name: The name of the container, "nginx-app".
+#           image: Specifies the container image using Helm templating to dynamically set the repository and tag.
+#           imagePullPolicy: Defines the image pull policy (e.g., Always, IfNotPresent).
+#           ports:
+#             - containerPort: Exposes port 80 for the container.
+#           resources:
+#             requests: Specifies the minimum resources required for the container (CPU and memory).
+#             limits: Specifies the maximum resources allocated for the container (CPU and memory).
+#           livenessProbe: Configures a probe to check if the container is running. 
+#             httpGet: Sends an HTTP GET request to the root path ("/") on port 80.
+#             initialDelaySeconds: Time to wait before starting the liveness probe.
+#             periodSeconds: Frequency of the liveness probe checks.
+#             failureThreshold: Number of consecutive failures before the container is considered unhealthy.
+#           readinessProbe: Configures a probe to check if the container is ready to serve traffic.
+#             httpGet: Sends an HTTP GET request to the root path ("/") on port 80.
+#             initialDelaySeconds: Time to wait before starting the readiness probe.
+#             periodSeconds: Frequency of the readiness probe checks.
+#             failureThreshold: Number of consecutive failures before the container is considered not ready.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-app
+spec:
+  replicas: {{ .Values.nginxApp.replicas }}
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+        - name: nginx-app
+          image: "{{ .Values.nginxApp.image.repository }}:{{ .Values.nginxApp.image.tag }}"
+          imagePullPolicy: {{ .Values.nginxApp.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: {{ .Values.nginxApp.resources.requests.cpu | quote }}
+              memory: {{ .Values.nginxApp.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.nginxApp.resources.limits.cpu | quote }}
+              memory: {{ .Values.nginxApp.resources.limits.memory | quote }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3

@@ -1,0 +1,30 @@
+# This YAML configuration defines values for deploying an Nginx application using Helm.
+# 
+# nginxApp:
+#   - image: Specifies the container image details for the Nginx application.
+#     - repository: The name of the image repository (e.g., "nginx").
+#     - tag: The specific version/tag of the image to use (e.g., "latest").
+#     - pullPolicy: Defines the policy for pulling the image (e.g., "IfNotPresent").
+#   - resources: Configures resource requests and limits for the application.
+#     - requests: Minimum resources required by the container.
+#       - cpu: Minimum CPU allocation (e.g., "100m").
+#       - memory: Minimum memory allocation (e.g., "128Mi").
+#     - limits: Maximum resources the container is allowed to use.
+#       - cpu: Maximum CPU allocation (e.g., "500m").
+#       - memory: Maximum memory allocation (e.g., "512Mi").
+#   - replicas: Specifies the number of pod replicas for the application.
+#     - Defines how many instances of the application should run simultaneously.
+# Secret values for your app
+nginxApp:
+  replicas: 3
+  image:
+    repository: nginx
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

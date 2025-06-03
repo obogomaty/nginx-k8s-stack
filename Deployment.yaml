@@ -1,0 +1,196 @@
+# This Kubernetes configuration file defines multiple resources for the "nginx-app" application:
+#
+# 1. Deployment:
+#    - Deploys the "nginx-app" container with 1 replica.
+#    - Specifies resource requests and limits for CPU and memory.
+#    - Uses the "nginx-app-sa" ServiceAccount.
+#
+# 2. PodDisruptionBudget:
+#    - Ensures at least 1 pod is always available during voluntary disruptions.
+#
+# 3. NetworkPolicy (allow-nginx-app):
+#    - Allows ingress and egress traffic within pods labeled "app: nginx-app".
+#
+# 4. NetworkPolicy (nginx-app-restrictive):
+#    - Restricts ingress and egress traffic to pods labeled "app: nginx-app" within the "default" namespace.
+#    - Limits traffic to TCP port 80.
+#
+# 5. HorizontalPodAutoscaler:
+#    - Scales the "nginx-app" Deployment between 1 and 5 replicas based on CPU utilization.
+#    - Targets 50% average CPU utilization.
+#
+# 6. CronJob:
+#    - Runs a backup job daily at 2am using a "busybox" container.
+#    - Logs a backup message and sleeps for 30 seconds.
+#    - Specifies resource requests and limits for the backup container.
+#
+# 7. ServiceAccount:
+#    - Defines a ServiceAccount named "nginx-app-sa" for the application.
+#
+# 8. Role:
+#    - Grants permissions to get, list, and watch "pods", "services", and "endpoints".
+#
+# 9. RoleBinding:
+#    - Binds the "nginx-app-sa" ServiceAccount to the "nginx-app-role".
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      serviceAccountName: nginx-app-sa
+      containers:
+      - name: nginx-app
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nginx-app-pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: nginx-app
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nginx-app
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx-app
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: nginx-app
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx-app-restrictive
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: default
+      podSelector:
+        matchLabels:
+          app: nginx-app
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: default
+      podSelector:
+        matchLabels:
+          app: nginx-app
+    ports:
+    - protocol: TCP
+      port: 80
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-app
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nginx-app-backup
+spec:
+  schedule: "0 2 * * *" # Runs daily at 2am
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: busybox:1.36.1
+            imagePullPolicy: Always
+            command: ["/bin/sh", "-c", "echo Backing up nginx-app data! && sleep 30"]
+            resources:
+              requests:
+                memory: "32Mi"
+                cpu: "50m"
+              limits:
+                memory: "64Mi"
+                cpu: "100m"
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-app-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nginx-app-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nginx-app-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: nginx-app-sa
+roleRef:
+  kind: Role
+  name: nginx-app-role
+  apiGroup: rbac.authorization.k8s.io

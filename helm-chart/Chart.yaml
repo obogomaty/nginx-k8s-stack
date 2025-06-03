@@ -1,0 +1,10 @@
+# This is the Chart.yaml file for the Helm chart configuration of the "nginx-app".
+# 
+# apiVersion: Specifies the version of the Helm chart API. In this case, it uses v2, which is compatible with Helm 3.
+# name: Defines the name of the Helm chart. Here, it is set to "nginx-app".
+# description: Provides a brief description of the Helm chart. It describes this chart as being for the "nginx-app".
+# version: Indicates the version of the Helm chart. The current version is 0.1.0, which follows semantic versioning.
+apiVersion: v2
+name: nginx-app
+description: A Helm chart for the nginx-app
+version: 0.1.0

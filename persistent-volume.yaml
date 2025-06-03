@@ -1,0 +1,84 @@
+# This YAML configuration defines resources for a Kubernetes application stack:
+# 
+# 1. PersistentVolume (nginx-app-pv):
+#    - Provides 1Gi of storage.
+#    - Accessible in ReadWriteOnce mode.
+#    - Uses hostPath at "/mnt/data/nginx-app".
+# 
+# 2. PersistentVolumeClaim (nginx-app-pvc):
+#    - Requests 1Gi of storage from the PersistentVolume.
+#    - Accessible in ReadWriteOnce mode.
+# 
+# 3. CronJob (nginx-app-backup):
+#    - Scheduled to run daily at 2am.
+#    - Executes a backup operation using a BusyBox container.
+#    - Copies data from the "nginx-app-pvc" volume to the "nginx-app-backup-pvc" volume.
+#    - Uses two volume mounts:
+#      - /data: Mounted from "nginx-app-pvc".
+#      - /backup: Mounted from "nginx-app-backup-pvc".
+#    - Restart policy is set to OnFailure.
+# 
+# 4. PersistentVolumeClaim (nginx-app-backup-pvc):
+#    - Requests 1Gi of storage for backup purposes.
+#    - Accessible in ReadWriteOnce mode.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-app-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/nginx-app"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nginx-app-backup
+spec:
+  schedule: "0 2 * * *" # Daily at 2am
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: busybox:1.36.1
+            command: ["/bin/sh", "-c", "cp -r /data /backup/backup-$(date +\%Y-\%m-\%d) && echo Backup complete"]
+            volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: backup
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: nginx-app-pvc
+          - name: backup
+            persistentVolumeClaim:
+              claimName: nginx-app-backup-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-app-backup-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

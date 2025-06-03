@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+logs.txt
+*.log
+
+# Kubernetes config
+kubeconfig
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# C#
+*.exe
+*.dll
+*.pdb
+*.cache
+*.mdb
+*.user
+*.suo
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# General
+*.swp
+*~
+
+# Secrets
+Secret.yaml

@@ -1,0 +1,30 @@
+# This YAML file defines a Kubernetes Service resource for the "nginx-app".
+# 
+# apiVersion: Specifies the API version used for the Service resource.
+# kind: Indicates that this resource is of type "Service".
+# metadata:
+#   name: The name of the Service, "nginx-app-service".
+#   labels: Key-value pairs used for identifying and grouping resources, here labeling the app as "nginx-app".
+# spec:
+#   type: Defines the type of Service. "NodePort" exposes the Service on a static port on each node.
+#   selector: Matches the pods with the label "app: nginx-app" to route traffic to them.
+#   ports:
+#     - protocol: Specifies the protocol used, here "TCP".
+#       port: The port on which the Service is exposed, here 80.
+#       targetPort: The port on the container to which traffic is forwarded, here 80.
+#       nodePort: The static port on each node where the Service is exposed, here 32080.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-app-service
+  labels:
+    app: nginx-app
+spec:
+  type: NodePort
+  selector:
+    app: nginx-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 32080
