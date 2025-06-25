@@ -1,7 +1,21 @@
+# Documentation:
+# nginxApp:
+#   replicas: Number of pod replicas to deploy for the nginx application.
+#   image:
+#     repository: Name of the Docker image repository for nginx.
+#     tag: Version tag of the nginx Docker image to use.
+#     pullPolicy: Policy for pulling the Docker image (e.g., Always, IfNotPresent, Never).
+#   resources:
+#     requests:
+#       cpu: Minimum amount of CPU resources required for the nginx pod (e.g., "100m" = 0.1 CPU).
+#       memory: Minimum amount of memory resources required for the nginx pod (e.g., "128Mi").
+#     limits:
+#       cpu: Maximum amount of CPU resources allowed for the nginx pod (e.g., "500m" = 0.5 CPU).
+#       memory: Maximum amount of memory resources allowed for the nginx pod (e.g., "512Mi").
 nginxApp:
   replicas: 3
   image:
-    repository: nginx
+    repository: openresty/openresty
     tag: "latest"
     pullPolicy: IfNotPresent
   resources:

@@ -49,7 +49,7 @@ spec:
       serviceAccountName: nginx-app-sa
       containers:
       - name: nginx-app
-        image: nginx:latest
+        image: openresty/openresty:latest
         ports:
         - containerPort: 80
         resources:

@@ -1,0 +1,19 @@
+suite: deployment
+templates:
+  - deployment.yaml
+tests:
+  - it: should have the correct replicas
+    asserts:
+      - isEqual:
+          path: spec.replicas
+          value: 3
+  - it: should have the correct image
+    asserts:
+      - isEqual:
+          path: spec.template.spec.containers[0].image
+          value: "myapp:latest"
+  - it: should have the correct service account
+    asserts:
+      - isEqual:
+          path: spec.template.spec.serviceAccountName
+          value: "myapp-service-account"

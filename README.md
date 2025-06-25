@@ -1,6 +1,6 @@
-# NGINX App Kubernetes Helm Chart
+# OpenResty App Kubernetes Helm Chart
 
-This project provides a production-ready, DevOps-focused Kubernetes deployment for an NGINX application, using Helm for templating and environment promotion.
+This project provides a production-ready, DevOps-focused Kubernetes deployment for an OpenResty application, using Helm for templating and environment promotion.
 
 ## Features
 - **Helm Chart** for easy templating and deployment
@@ -52,6 +52,7 @@ helm-chart/
 
 ## Customization
 - Edit `values.yaml` and overlay values files to set image tags, resource limits, secrets, and environment-specific settings.
+- By default, the stack deploys OpenResty (`openresty/openresty:latest`). You can switch to another compatible image by editing the image fields in the values files.
 - Add or modify templates in `templates/` for additional resources.
 
 ## Security & Best Practices

@@ -1,6 +1,19 @@
+# Documentation:
+# nginxApp:
+#   image:
+#     repository: Specifies the Docker image repository for the nginx application.
+#     tag: Defines the specific version of the image to use. "latest" indicates the most recent version.
+#     pullPolicy: Determines the image pull policy. "IfNotPresent" ensures the image is pulled only if it is not already present locally.
+#   resources:
+#     requests:
+#       cpu: Minimum amount of CPU resources required by the nginx application (e.g., "100m" equals 0.1 CPU).
+#       memory: Minimum amount of memory resources required by the nginx application (e.g., "128Mi").
+#     limits:
+#       cpu: Maximum amount of CPU resources the nginx application can use (e.g., "500m" equals 0.5 CPU).
+#       memory: Maximum amount of memory resources the nginx application can use (e.g., "512Mi").
 nginxApp:
   image:
-    repository: nginx
+    repository: openresty/openresty
     tag: "latest"
     pullPolicy: IfNotPresent
   resources:

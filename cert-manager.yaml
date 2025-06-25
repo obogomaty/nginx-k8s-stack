@@ -1,3 +1,27 @@
+# This YAML configuration sets up Cert-Manager in a Kubernetes cluster.
+# 
+# 1. Namespace:
+#    - Creates a dedicated namespace named "cert-manager" for the Cert-Manager resources.
+#
+# 2. ServiceAccount:
+#    - Defines a ServiceAccount named "cert-manager" in the "cert-manager" namespace.
+#
+# 3. Deployment:
+#    - Deploys the Cert-Manager controller as a single replica.
+#    - Uses the image "quay.io/jetstack/cert-manager-controller:v1.14.4".
+#    - Configures environment variables and arguments for the controller.
+#    - Exposes port 9402 for the container.
+#
+# 4. Service:
+#    - Creates a ClusterIP service named "cert-manager-webhook" in the "cert-manager" namespace.
+#    - Exposes port 443 and maps it to container port 10250.
+#    - Selects pods with the label "app: cert-manager".
+#
+# 5. ClusterIssuer:
+#    - Defines a ClusterIssuer named "letsencrypt-staging" for issuing certificates using Let's Encrypt staging environment.
+#    - Configures ACME protocol with the staging server URL.
+#    - Specifies an email address for notifications and a secret reference for the private key.
+#    - Uses HTTP-01 challenge solver with ingress class "nginx".
 ```yaml
 ---
 apiVersion: v1

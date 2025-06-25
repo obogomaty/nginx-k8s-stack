@@ -1,4 +1,28 @@
 ---
+# This YAML configuration sets up a Kubernetes stack for Loki, a log aggregation system.
+# It includes the following resources:
+#
+# 1. Namespace:
+#    - Creates a dedicated namespace named "logging" for the Loki application.
+#
+# 2. ServiceAccount:
+#    - Defines a ServiceAccount named "loki" in the "logging" namespace for Loki's deployment.
+#
+# 3. Service:
+#    - Exposes Loki as a NodePort service on port 31000.
+#    - Maps port 3100 on the container to port 31000 on the node.
+#    - Uses a selector to target pods labeled with "app: loki".
+#
+# 4. Deployment:
+#    - Deploys Loki with a single replica.
+#    - Specifies the container image "grafana/loki:2.9.4".
+#    - Mounts a ConfigMap volume to provide Loki's configuration file.
+#    - Uses the "loki" ServiceAccount for permissions.
+#
+# 5. ConfigMap:
+#    - Provides Loki's configuration file under the name "loki-config".
+#    - Configures Loki with settings for server, ingester, schema, storage, limits, chunk store, and table manager.
+#    - Enables local storage for logs and sets retention policies.
 apiVersion: v1
 kind: Namespace
 metadata:

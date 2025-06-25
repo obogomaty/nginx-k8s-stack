@@ -1,0 +1,25 @@
+suite: service
+templates:
+  - service.yaml
+tests:
+  - it: should have the correct service type
+    set:
+      service.type: ClusterIP
+    asserts:
+      - isKind: Service
+      - hasType: ClusterIP
+
+  - it: should have the correct port
+    set:
+      service.port: 80
+    asserts:
+      - hasPort:
+          port: 80
+          targetPort: 80
+
+  - it: should have the correct selector
+    set:
+      service.selector.app: my-app
+    asserts:
+      - hasSelector:
+          app: my-app

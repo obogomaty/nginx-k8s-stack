@@ -1,3 +1,25 @@
+# This GitHub Actions workflow is designed to perform a vulnerability scan on a Docker image using Trivy.
+# 
+# Workflow Name:
+#   Trivy Image Scan
+#
+# Trigger Events:
+#   - pull_request: Executes the workflow when a pull request is made to the 'main' branch.
+#   - push: Executes the workflow when changes are pushed to the 'main' branch.
+#
+# Jobs:
+#   trivy-scan:
+#     - Runs on the latest Ubuntu environment.
+#     - Steps:
+#       1. Checkout code: Uses the 'actions/checkout' action to fetch the repository code.
+#       2. Set up Docker Buildx: Configures Docker Buildx for building multi-platform images.
+#       3. Build Docker image: Builds a Docker image tagged as 'movie-app:ci' using the repository's Dockerfile.
+#       4. Run Trivy vulnerability scanner: Scans the built Docker image for vulnerabilities using the 'aquasecurity/trivy-action'.
+#          - image-ref: Specifies the Docker image to scan ('movie-app:ci').
+#          - format: Outputs the scan results in a table format.
+#          - exit-code: Sets the exit code to 1 if vulnerabilities are found.
+#          - ignore-unfixed: Ignores vulnerabilities that do not have fixes available.
+#          - vuln-type: Scans for both OS and library vulnerabilities.
 name: Trivy Image Scan
 
 on:

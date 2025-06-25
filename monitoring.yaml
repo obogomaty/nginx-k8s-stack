@@ -1,3 +1,24 @@
+# This YAML configuration sets up a monitoring stack in Kubernetes, including Prometheus and Grafana.
+# 
+# 1. Namespace:
+#    - Creates a "monitoring" namespace to isolate monitoring resources.
+#
+# 2. Prometheus:
+#    - ServiceAccount: Defines a service account named "prometheus" in the "monitoring" namespace.
+#    - Service: Exposes Prometheus on NodePort 30900, accessible on port 9090.
+#    - Deployment: Deploys Prometheus with one replica, using the "prom/prometheus:latest" image.
+#      - Mounts a ConfigMap named "prometheus-config" to provide Prometheus configuration.
+#    - ConfigMap: Contains Prometheus configuration, including scrape intervals and targets.
+#
+# 3. Grafana:
+#    - ServiceAccount: Defines a service account named "grafana" in the "monitoring" namespace.
+#    - Service: Exposes Grafana on NodePort 30300, accessible on port 3000.
+#    - Deployment: Deploys Grafana with one replica, using the "grafana/grafana:latest" image.
+#
+# 4. PrometheusRule:
+#    - Defines custom alerting rules for Prometheus:
+#      - "MovieAppDown": Alerts when no "movie-app" pods are running for more than 2 minutes.
+#      - "HighMovieAppCPU": Alerts when "movie-app" CPU usage exceeds 0.5 cores for 5 minutes.
 ---
 apiVersion: v1
 kind: Namespace
@@ -111,8 +132,7 @@ spec:
         ports:
         - containerPort: 3000
         env:
-        - name: GF_INSTALL_PLUGINS
-          value: "grafana-loki-datasource"
+        # Removed GF_INSTALL_PLUGINS to prevent plugin not found error
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule

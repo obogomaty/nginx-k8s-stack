@@ -1,3 +1,25 @@
+# This YAML configuration defines resource constraints for a Kubernetes namespace
+# to optimize cost and ensure fair resource allocation for the "movie-app" application.
+
+# ResourceQuota:
+# - Specifies the maximum amount of resources that can be consumed by all objects in the namespace.
+# - `pods`: Limits the total number of pods to 5.
+# - `requests.cpu`: Caps the total CPU requests to 2 cores.
+# - `requests.memory`: Caps the total memory requests to 2Gi.
+# - `limits.cpu`: Caps the total CPU limits to 4 cores.
+# - `limits.memory`: Caps the total memory limits to 4Gi.
+# - `persistentvolumeclaims`: Limits the number of PersistentVolumeClaims to 2.
+# - `services`: Limits the number of services to 3.
+
+# LimitRange:
+# - Defines default resource requests and limits for containers in the namespace.
+# - `default`: Specifies default resource limits for containers:
+#   - CPU: 500m (0.5 cores)
+#   - Memory: 512Mi
+# - `defaultRequest`: Specifies default resource requests for containers:
+#   - CPU: 100m (0.1 cores)
+#   - Memory: 128Mi
+# - `type: Container`: Indicates that the limits apply to individual containers.
 apiVersion: v1
 kind: ResourceQuota
 metadata:

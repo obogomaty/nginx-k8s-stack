@@ -18,7 +18,7 @@
 nginxApp:
   replicas: 3
   image:
-    repository: nginx
+    repository: openresty/openresty
     tag: "latest"
     pullPolicy: IfNotPresent
   resources:

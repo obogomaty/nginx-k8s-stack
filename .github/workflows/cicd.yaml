@@ -1,5 +1,27 @@
 name: CI/CD Pipeline
 
+# This GitHub Actions workflow automates the CI/CD process for a Kubernetes application stack.
+# 
+# Trigger:
+# - The workflow is triggered on `push` and `pull_request` events targeting the `main` branch.
+# 
+# Jobs:
+# 1. build-and-push:
+#    - Runs on `ubuntu-latest`.
+#    - Steps:
+#      - Checks out the code from the repository.
+#      - Sets up Docker Buildx for multi-platform builds.
+#      - Logs in to Docker Hub using credentials stored in GitHub Secrets.
+#      - Builds and pushes a Docker image to Docker Hub with the tag `llm-app:latest`.
+# 
+# 2. deploy:
+#    - Depends on the `build-and-push` job.
+#    - Runs on `ubuntu-latest`.
+#    - Steps:
+#      - Checks out the code from the repository.
+#      - Sets up `kubectl` for interacting with Kubernetes clusters.
+#      - Configures the Kubernetes context using a kubeconfig file stored in GitHub Secrets.
+#      - Deploys the application to Kubernetes by applying `Deployment.yaml` and `Service.yaml` manifests.
 on:
   push:
     branches:

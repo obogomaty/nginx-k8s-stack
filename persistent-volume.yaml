@@ -57,7 +57,7 @@ spec:
           containers:
           - name: backup
             image: busybox:1.36.1
-            command: ["/bin/sh", "-c", "cp -r /data /backup/backup-$(date +\%Y-\%m-\%d) && echo Backup complete"]
+            command: ['/bin/sh', '-c', 'cp -r /data /backup/backup-$(date +%Y-%m-%d) && echo Backup complete']
             volumeMounts:
             - name: data
               mountPath: /data
